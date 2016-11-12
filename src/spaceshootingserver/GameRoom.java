@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GameRoom {
     // A list to record the move of all the players
-    private List<String> gameRecord = Collections.synchronizedList(new ArrayList<>()); 
+    private List<Integer> gameRecord = Collections.synchronizedList(new ArrayList<>()); 
     // A list to remember the list of player currently in a room
     private List<String> playerList = Collections.synchronizedList(new ArrayList<>()); 
     
@@ -32,7 +32,7 @@ public class GameRoom {
     
     public void getMove(){
     }                
-    public int getRoomSize() { return gameRecord.size(); }    
+    public int getMoveCount() { return gameRecord.size(); }    
     public String toString() { return roomName;}
 
     //Run a thread

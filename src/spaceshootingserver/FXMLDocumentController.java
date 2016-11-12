@@ -165,7 +165,9 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
                   break;
               }
               case SEND_START_GAME: {
-                  
+                  outputToClient.println(GET_START_GAME);
+                  outputToClient.flush();
+                  break;
               }
               case SEND_MOVE: {
                   break;
