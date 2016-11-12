@@ -63,26 +63,27 @@ public class FXMLDocumentController implements Initializable {
                     });
 
                     // Create and start a new thread for the connection                    
-                    new Thread(new HandleAClient(socket, roomList, textArea)).start();                    
+                    new Thread(new HandleAPlayer(socket, roomList, clientNo, textArea)).start();                    
                 }
             } catch (IOException ex) {
                 System.err.println(ex);
             }
-        }).start();
-                
+        }).start();                
     }
 }
 
-class HandleAClient implements Runnable, interaction.InteractionConstants {
+class HandleAPlayer implements Runnable, interaction.InteractionConstants {
     private Socket socket; // A connected socket    
     private ObservableList<GameRoom> roomList; // Reference to shared list of transcript         
     private TextArea textArea;
     private int roomId;
-    private String handle;    
+    private String playerName;    
+    private int playerId;
     
-    public HandleAClient(Socket socket,ObservableList<GameRoom> roomList, TextArea textArea) {
+    public HandleAPlayer(Socket socket,ObservableList<GameRoom> roomList, int playerId, TextArea textArea) {
       this.socket = socket;
       this.roomList = roomList;
+      this.playerId = playerId;
       this.textArea = textArea;
       roomId = -1;
     }    
@@ -100,7 +101,7 @@ class HandleAClient implements Runnable, interaction.InteractionConstants {
           // Process request
           switch(request) {       
               case SEND_NAME: {
-                  handle = inputFromClient.readLine();
+                  playerName = inputFromClient.readLine();
                   break;
               }
               case GET_ROOM: {
@@ -116,9 +117,16 @@ class HandleAClient implements Runnable, interaction.InteractionConstants {
                   break;
               }              
               case CREATE_ROOM: {
+                  String roomName = inputFromClient.readLine();
+                  GameRoom newRoom = new GameRoom(roomName);
+                  roomList.add(newRoom);
+                  // When a player creates a new room, he also enters that room
+                  roomId = roomList.size() - 1;
                   break;
               }
               case GET_USER_ID: {
+                  outputToClient.println(playerId);
+                  outputToClient.flush();                  
                   break;
               }
               case SEND_ROOM: {
