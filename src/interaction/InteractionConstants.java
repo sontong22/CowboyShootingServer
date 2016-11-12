@@ -12,4 +12,9 @@ public interface InteractionConstants {
     public static int SEND_MOVE = 8;    
     public static int GET_MOVE_COUNT = 9;
     public static int GET_ROOM_COUNT = 10;
-}
+    
+    public static int SEND_MOVE_LEFT = 20;
+    public static int SEND_MOVE_RIGHT = 21;
+    public static int SEND_FIRE = 22;
+}   
+

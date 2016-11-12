@@ -170,6 +170,8 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
                   break;
               }
               case SEND_MOVE: {
+                  int kindOfMove = Integer.parseInt(inputFromClient.readLine());
+                  
                   break;
               }
               case GET_ROOM_COUNT: {
