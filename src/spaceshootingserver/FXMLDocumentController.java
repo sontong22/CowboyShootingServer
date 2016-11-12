@@ -63,7 +63,7 @@ public class FXMLDocumentController implements Initializable {
                     });
 
                     // Create and start a new thread for the connection                    
-                    new Thread(new HandleAPlayer(socket, roomList, clientNo, textArea)).start();                    
+                    new Thread(new HandleAPlayer(socket, roomList, textArea)).start();                    
                 }
             } catch (IOException ex) {
                 System.err.println(ex);
@@ -76,16 +76,18 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
     private Socket socket; // A connected socket    
     private ObservableList<GameRoom> roomList; // Reference to shared list of transcript         
     private TextArea textArea;
-    private int roomId;
-    private String playerName;    
-    private int playerId;
+    private int roomId;    
+    private String playerName;
+    // This is a 2-player game so the creator of the room will have id: 1
+    // and the one who joins the room will have id: 2
+    private int playerId;    
     
-    public HandleAPlayer(Socket socket,ObservableList<GameRoom> roomList, int playerId, TextArea textArea) {
+    public HandleAPlayer(Socket socket,ObservableList<GameRoom> roomList, TextArea textArea) {
       this.socket = socket;
-      this.roomList = roomList;
-      this.playerId = playerId;
+      this.roomList = roomList;            
       this.textArea = textArea;
       roomId = -1;
+      playerId = -1;
     }    
     
     public void run() {
@@ -121,28 +123,45 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
                   GameRoom newRoom = new GameRoom(roomName);
                   roomList.add(newRoom);
                   // When a player creates a new room, he also enters that room
-                  roomId = roomList.size() - 1;
-                  break;
-              }
-              case GET_USER_ID: {
-                  outputToClient.println(playerId);
-                  outputToClient.flush();                  
+                  roomId = roomList.lastIndexOf(newRoom);
+//                  roomId = roomList.size() - 1;
+
+                  // and id = 1
+                  playerId = 1;
                   break;
               }
               case SEND_ROOM: {
                   roomId = Integer.parseInt(inputFromClient.readLine());
-                  roomList.get(roomId).playerEntered();
+                  roomList.get(roomId).playerEntered();                                    
+                  
+                  // When a player enters a room, his id = 2
+                  playerId = 2;
+                  
                   System.out.println("roomId: "+roomId+" name:"+roomList.get(roomId).toString());
                   System.out.println("clientEntered. numOfClient: "+roomList.get(roomId).getNumOfPlayer());
                   break;
               }                            
               case SEND_EXIT_ROOM: {                  
-                  roomList.get(roomId).playerExited();
+                  roomList.get(roomId).playerExited();                  
+                  
+                  // When a player exits a room, his id = -1
+                  playerId = -1;
+                  
                   System.out.println("roomId: "+roomId+" name:"+roomList.get(roomId).toString());
                   System.out.println("clientExited. numOfClient: "+roomList.get(roomId).getNumOfPlayer());
                   break;
               }
               case GET_PLAYER_LIST: {
+                  // Send number of lines that will be flushed
+                  int n = roomList.get(roomId).getPlayerList().size();
+                  outputToClient.println(n);                                   
+                  
+                  // Send all a list of all players currently in the room
+                  for(int i = 0; i < n; i++){                      
+                      outputToClient.println(roomList.get(i).getPlayerList().get(i));
+                  }
+                  
+                  outputToClient.flush();
                   break;
               }
               case SEND_START_GAME: {

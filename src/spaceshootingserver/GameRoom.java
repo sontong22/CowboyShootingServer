@@ -6,7 +6,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class GameRoom {
-    private List<String> gameRoom = Collections.synchronizedList(new ArrayList<String>());
+    // A list to record the move of all the players
+    private List<String> gameRecord = Collections.synchronizedList(new ArrayList<>()); 
+    // A list to remember the list of player currently in a room
+    private List<String> playerList = Collections.synchronizedList(new ArrayList<>()); 
+    
     private String roomName;
     private int numOfPlayer = 0;      
     
@@ -17,17 +21,18 @@ public class GameRoom {
         this.roomName = name;
     }
     
+    public List<String> getPlayerList(){
+        return playerList;
+    }
+    
     public void playerEntered(){ numOfPlayer++;}    
     public void playerExited(){ numOfPlayer--;}    
     public int getNumOfPlayer(){ return numOfPlayer;}
     public String getRoomName() { return roomName;}
     
     public void getMove(){
-    }
-    
-    
-    public int getSize() { return gameRoom.size(); }
-    public String getComment(int n) { return gameRoom.get(n); }
+    }                
+    public int getRoomSize() { return gameRecord.size(); }    
     public String toString() { return roomName;}
 
     //Run a thread
