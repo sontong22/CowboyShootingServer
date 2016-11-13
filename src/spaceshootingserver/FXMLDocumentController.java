@@ -98,9 +98,6 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
           switch(request) {       
               case SEND_NAME: {
                   player.setPlayerName(inputFromClient.readLine());                  
-                  break;
-              }
-              case GET_USER_ID: {
                   outputToClient.println(player.getPlayerId());
                   outputToClient.flush();                  
                   break;
