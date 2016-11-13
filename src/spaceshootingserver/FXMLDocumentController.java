@@ -9,26 +9,26 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 
-public class FXMLDocumentController implements Initializable {
+public class FXMLDocumentController implements Initializable  {
     
     @FXML
     private TextArea textArea;    
     
     private int playerId = 0;    
-    private ObservableList<GameRecord> recordList;              
+    private List<GameRecord> recordList;              
             
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        recordList = FXCollections.synchronizedObservableList(FXCollections.observableList(new ArrayList<>()));        
+        recordList = Collections.synchronizedList(new ArrayList<>()); 
         
         // A thread that handles the connection with users
         new Thread(() -> {
@@ -61,27 +61,27 @@ public class FXMLDocumentController implements Initializable {
 
 class HandleAPlayer implements Runnable, interaction.InteractionConstants {
     private Socket socket; // A connected socket    
-    private ObservableList<GameRecord> recordList;         
+    private List<GameRecord> recordList;         
     private TextArea textArea;    
     private Player player;
     private int recordId;
     
-    public HandleAPlayer(Socket socket,ObservableList<GameRecord> recordList, int playerId, TextArea textArea) {
+    public HandleAPlayer(Socket socket, List<GameRecord> recordList, int playerId, TextArea textArea) {
       this.socket = socket;
       this.recordList = recordList;       
       this.textArea = textArea;      
       player = new Player(playerId);      
       
-      // if playerId is an odd number, create a new GameRecord and put him into it
-      if(playerId%2 == 1){
-          recordId = playerId/2;
-          this.recordList.add(new GameRecord());          
-      // if playerId is an even number, put the player into the GameRord for recordList with index = i / 2 - 1
-      } else {
-          recordId = playerId/2 - 1;          
-      }
-      
-      this.recordList.get(recordId).addPlayer(player);
+//      // if playerId is an odd number, create a new GameRecord and put him into it
+//      if(playerId%2 == 1){
+//          recordId = playerId/2;
+//          this.recordList.add(new GameRecord());          
+//      // if playerId is an even number, put the player into the GameRord for recordList with index = i / 2 - 1
+//      } else {
+//          recordId = playerId/2 - 1;          
+//      }
+//      
+//      this.recordList.get(recordId).addPlayer(player);
     }    
     
     public void run() {
@@ -99,7 +99,19 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
               case SEND_NAME: {
                   player.setPlayerName(inputFromClient.readLine());                  
                   outputToClient.println(player.getPlayerId());
-                  outputToClient.flush();                  
+                  outputToClient.flush();            
+                  
+                  // if playerId is an odd number, create a new GameRecord and put him into it
+                  if (player.getPlayerId() % 2 == 1) {
+                      recordId = player.getPlayerId() / 2;
+                      this.recordList.add(new GameRecord());
+                      // if playerId is an even number, put the player into the GameRord for recordList with index = i / 2 - 1
+                  } else {
+                      recordId = player.getPlayerId() / 2 - 1;
+                  }
+
+                  this.recordList.get(recordId).addPlayer(player);
+                  
                   break;
               }
               case GET_START_GAME: {             
