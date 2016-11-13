@@ -12,7 +12,9 @@ public class GameRoom {
     private List<String> playerList = Collections.synchronizedList(new ArrayList<>()); 
     
     private String roomName;
-    private int numOfPlayer = 0;      
+    private int numOfPlayer = 0;   
+    
+    private boolean isGameStarted = false;
     
     public GameRoom(){        
     }
@@ -29,6 +31,23 @@ public class GameRoom {
     public void playerExited(){ numOfPlayer--;}    
     public int getNumOfPlayer(){ return numOfPlayer;}
     public String getRoomName() { return roomName;}
+    
+    public void startGame(){
+        isGameStarted = true;
+    }
+    
+    public void endGame(){
+        isGameStarted = false;
+    }
+    
+    public boolean getGameState(){
+        return isGameStarted;
+    }
+    
+    public void addMove(int playerId, int move){
+        gameRecord.add(playerId);
+        gameRecord.add(move);
+    }
     
     public void getMove(){
     }                

@@ -2,7 +2,6 @@
 package spaceshootingserver;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -82,6 +81,7 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
     // and the one who joins the room will have id: 2
     private int playerId;    
     
+    
     public HandleAPlayer(Socket socket,ObservableList<GameRoom> roomList, TextArea textArea) {
       this.socket = socket;
       this.roomList = roomList;            
@@ -106,79 +106,41 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
                   playerName = inputFromClient.readLine();
                   break;
               }
-              case GET_ROOM: {
-                  int n = roomList.size();
-                  outputToClient.println(n);                                   
-                  
-                  for(int i = 0; i < n; i++){
-                      outputToClient.println(i);
-                      outputToClient.println(roomList.get(i).getRoomName());
-                  }
-                  
-                  outputToClient.flush();
-                  break;
-              }              
-              case CREATE_ROOM: {
-                  String roomName = inputFromClient.readLine();
-                  GameRoom newRoom = new GameRoom(roomName);
-                  roomList.add(newRoom);
-                  // When a player creates a new room, he also enters that room
-                  roomId = roomList.lastIndexOf(newRoom);
-//                  roomId = roomList.size() - 1;
-
-                  // and id = 1
-                  playerId = 1;
-                  break;
-              }
-              case SEND_ROOM: {
-                  roomId = Integer.parseInt(inputFromClient.readLine());
-                  roomList.get(roomId).playerEntered();                                    
-                  
-                  // When a player enters a room, his id = 2
-                  playerId = 2;
-                  
-                  System.out.println("roomId: "+roomId+" name:"+roomList.get(roomId).toString());
-                  System.out.println("clientEntered. numOfClient: "+roomList.get(roomId).getNumOfPlayer());
-                  break;
-              }                            
-              case SEND_EXIT_ROOM: {                  
-                  roomList.get(roomId).playerExited();                  
-                  
-                  // When a player exits a room, his id = -1
-                  playerId = -1;
-                  
-                  System.out.println("roomId: "+roomId+" name:"+roomList.get(roomId).toString());
-                  System.out.println("clientExited. numOfClient: "+roomList.get(roomId).getNumOfPlayer());
-                  break;
-              }
-              case GET_PLAYER_LIST: {
-                  // Send number of lines that will be flushed
-                  int n = roomList.get(roomId).getPlayerList().size();
-                  outputToClient.println(n);                                   
-                  
-                  // Send all a list of all players currently in the room
-                  for(int i = 0; i < n; i++){                      
-                      outputToClient.println(roomList.get(i).getPlayerList().get(i));
-                  }
-                  
-                  outputToClient.flush();
+              case GET_USER_ID: {
                   break;
               }
               case SEND_START_GAME: {
-                  outputToClient.println(GET_START_GAME);
-                  outputToClient.flush();
+                  roomList.get(roomId).startGame();
+                  break;
+              }
+              case GET_START_GAME: {                                  
+                  if (roomId < roomList.size()) {
+                      outputToClient.println(roomList.get(roomId).getGameState());
+                      outputToClient.flush();
+                  } else{                      
+                      outputToClient.println(0);
+                      outputToClient.flush();
+                  }
                   break;
               }
               case SEND_MOVE: {
-                  int kindOfMove = Integer.parseInt(inputFromClient.readLine());
-                  
+                  int kindOfMove = Integer.parseInt(inputFromClient.readLine());                                    
+                  roomList.get(roomId).addMove(playerId, kindOfMove);                  
                   break;
               }
-              case GET_ROOM_COUNT: {
-                  outputToClient.println(roomList.size());
-                  outputToClient.flush();
+              case GET_MOVE_COUNT: {
+                  if (roomId < roomList.size()) {
+                      outputToClient.println(roomList.get(roomId).getMoveCount());
+                      outputToClient.flush();
+                  } else{
+                      outputToClient.println(0);
+                      outputToClient.flush();
+                  }
+                  break;                  
+              }
+              case GET_MOVE: {
                   break;
-              }                                          
+              }
           }
         }
       }
