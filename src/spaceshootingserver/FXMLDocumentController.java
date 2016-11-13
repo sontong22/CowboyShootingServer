@@ -75,14 +75,13 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
       // if playerId is an odd number, create a new GameRecord and put him into it
       if(playerId%2 == 1){
           recordId = playerId/2;
-          this.recordList.add(new GameRecord());
-          this.recordList.get(recordId).addPlayer(player);
+          this.recordList.add(new GameRecord());          
       // if playerId is an even number, put the player into the GameRord for recordList with index = i / 2 - 1
       } else {
-          recordId = playerId/2 - 1;
-          this.recordList.get(recordId - 1).addPlayer(player);
+          recordId = playerId/2 - 1;          
       }
       
+      this.recordList.get(recordId).addPlayer(player);
     }    
     
     public void run() {
