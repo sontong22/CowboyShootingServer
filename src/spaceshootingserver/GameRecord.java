@@ -6,8 +6,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class GameRecord {
-    // A list to record the move of all the players
-    private List<Integer> gameRecord = Collections.synchronizedList(new ArrayList<>()); 
+    // A list to record the movement of cowboys
+    private List<Movement> cowboyRecord = Collections.synchronizedList(new ArrayList<>()); 
+    
+    // A list to record the movement of missiles
+    private List<Movement> missileRecord = Collections.synchronizedList(new ArrayList<>()); 
+    
     // A list to record the player currently in this room
     private List<Player> playerList = Collections.synchronizedList(new ArrayList<>()); 
     
@@ -26,14 +30,17 @@ public class GameRecord {
         }
     }
     
-    public void addMove(int playerId, int move){
-        gameRecord.add(playerId);
-        gameRecord.add(move);
+    public int getPlayerId(int n){
+        return playerList.get(n).getPlayerId();
     }
     
-    public void getMove(){
-    }                
+    public void addCowboyMove(Movement move){ cowboyRecord.add(move);}
+    public void addMissileMove(Movement move){ missileRecord.add(move);}
     
-    public int getMoveCount() { return gameRecord.size(); }        
+    public Movement getCowboyMove(int n){ return cowboyRecord.get(n); }                
+    public Movement getMissileMove(int n){ return missileRecord.get(n); }                
+    
+    public int getCowboyMoveCount() { return cowboyRecord.size(); }        
+    public int getMissileMoveCount() { return missileRecord.size(); }        
 }
 
