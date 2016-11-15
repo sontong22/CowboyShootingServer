@@ -11,4 +11,8 @@ public class Movement {
         this.x = x;
         this.y = y;
     }
+    
+    public String toString(){
+        return playerId + " " + x + " " + y;
+    }
 }

@@ -103,31 +103,33 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
                   
                   break;
               }
-              case GET_OPPONENT_ID: {
-                  int n = recordList.size();
-                  int opponentId = -1;
-                  
-                  for(int i = 0; i < n; i++){
-                      opponentId = recordList.get(recordId).getPlayerId(i);
-                      if(opponentId != player.getPlayerId())
-                          outputToClient.println(opponentId);
-                  }
-                  
-                  outputToClient.flush();
-                  break;
-              }
               case GET_START_GAME: {             
                   outputToClient.println(recordList.get(recordId).getState());
                   outputToClient.flush();                  
                   break;
               }
+              case GET_OPPONENT_ID: {
+                  int opponentId = 0;
+
+                  for(int i = 0; i < 2; i++){
+                      if(recordList.get(recordId).getPlayerId(i) != player.getPlayerId())
+                          opponentId = recordList.get(recordId).getPlayerId(i);
+                  }
+                  
+                  System.err.println("opponentId: "+opponentId);
+                  outputToClient.println(opponentId);
+                  outputToClient.flush();
+                  break;
+              }
+              
               
               
               case SEND_COWBOY_MOVE: {                                                  
                   int x = Integer.parseInt(inputFromClient.readLine());                                    
                   int y = Integer.parseInt(inputFromClient.readLine());                                    
                   Movement move = new Movement(player.getPlayerId(), x, y);
-                  recordList.get(recordId).addCowboyMove(move);                  
+                  recordList.get(recordId).addCowboyMove(move);    
+                  System.err.println("SEND_COWBOW_MOVE: "+move);
                   break;
               }
               case GET_COWBOY_MOVE_COUNT: {                  
@@ -140,7 +142,7 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
                   outputToClient.println(recordList.get(recordId).getCowboyMove(n).playerId);
                   outputToClient.println(recordList.get(recordId).getCowboyMove(n).x);
                   outputToClient.println(recordList.get(recordId).getCowboyMove(n).y);
-                  outputToClient.flush();
+                  outputToClient.flush();                  
                   break;
               }
               case SEND_MISSILE_MOVE: {                  
