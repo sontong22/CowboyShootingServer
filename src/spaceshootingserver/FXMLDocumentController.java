@@ -124,47 +124,30 @@ class HandleAPlayer implements Runnable, interaction.InteractionConstants {
               
               
               
-              case SEND_COWBOY_MOVE: {                                                  
+              
+              case SEND_MOVE: {       
+                  int type = Integer.parseInt(inputFromClient.readLine());                                    
                   int x = Integer.parseInt(inputFromClient.readLine());                                    
                   int y = Integer.parseInt(inputFromClient.readLine());                                    
-                  Movement move = new Movement(player.getPlayerId(), x, y);
-                  recordList.get(recordId).addCowboyMove(move);    
-                  System.err.println("SEND_COWBOW_MOVE: "+move);
+                  Movement move = new Movement(type, player.getPlayerId(), x, y);
+                  recordList.get(recordId).addMove(move);    
+                  System.out.println("SEND_COWBOW_MOVE: " + move);
                   break;
               }
-              case GET_COWBOY_MOVE_COUNT: {                  
-                  outputToClient.println(recordList.get(recordId).getCowboyMoveCount());
+              case GET_MOVE_COUNT: {                  
+                  outputToClient.println(recordList.get(recordId).getMoveCount());
                   outputToClient.flush();
                   break;
               }
-              case GET_COWBOY_MOVE: {
+              case GET_MOVE: {                  
                   int n = Integer.parseInt(inputFromClient.readLine());
-                  outputToClient.println(recordList.get(recordId).getCowboyMove(n).playerId);
-                  outputToClient.println(recordList.get(recordId).getCowboyMove(n).x);
-                  outputToClient.println(recordList.get(recordId).getCowboyMove(n).y);
+                  outputToClient.println(recordList.get(recordId).getMove(n).type);
+                  outputToClient.println(recordList.get(recordId).getMove(n).playerId);
+                  outputToClient.println(recordList.get(recordId).getMove(n).x);
+                  outputToClient.println(recordList.get(recordId).getMove(n).y);
                   outputToClient.flush();                  
                   break;
-              }
-              case SEND_MISSILE_MOVE: {                  
-                  int x = Integer.parseInt(inputFromClient.readLine());                                    
-                  int y = Integer.parseInt(inputFromClient.readLine());                                    
-                  Movement move = new Movement(player.getPlayerId(), x, y);
-                  recordList.get(recordId).addMissileMove(move); 
-                  break;
-              }
-              case GET_MISSILE_MOVE_COUNT: {
-                  outputToClient.println(recordList.get(recordId).getMissileMoveCount());
-                  outputToClient.flush();
-                  break;
-              }
-              case GET_MISSILE_MOVE: {                  
-                  int n = Integer.parseInt(inputFromClient.readLine());
-                  outputToClient.println(recordList.get(recordId).getMissileMove(n).playerId);
-                  outputToClient.println(recordList.get(recordId).getMissileMove(n).x);
-                  outputToClient.println(recordList.get(recordId).getMissileMove(n).y);
-                  outputToClient.flush();
-                  break;
-              }
+              }              
           }
         }
       }
