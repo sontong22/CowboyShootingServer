@@ -18,9 +18,7 @@ public class SpaceShootingServer extends Application {
         
         stage.setScene(scene);
         stage.setTitle("Space Shooting Server");
-        // Closing the main window is not sufficient to completely kill
-        // the application, since we are going to be running a server thread.
-        // Calling System.exit() should do the trick.
+       
         stage.setOnCloseRequest(event->System.exit(0));        
         stage.show();
     }
